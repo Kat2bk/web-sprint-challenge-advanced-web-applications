@@ -1,12 +1,13 @@
 import React from "react";
-import e from "express";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 class LoginForm extends React.Component {
     state = {
         credentials: {
             username: "",
             password: ""
-        }
+        },
+        isLoading: false
     };
 
 
@@ -16,6 +17,20 @@ handleChange = (event) => {
             ...this.state.credentials,
             [e.target.name]: e.target.value
         }
+    })
+}
+
+handleLogin = (event) => {
+    event.preventDefault();
+    this.setState({ ...this.state, isLoading: true});
+    axiosWithAuth()
+    .post("/api/login", this.state.credentials)
+    .then((response) => {
+        localStorage.setItem("token", response.data.payload);
+    })
+    .catch((error) => {
+        this.setState({...this.state, isLoading: false});
+        console.log("cannot sign in", error)
     })
 }
 
@@ -29,7 +44,7 @@ render() {
                 Username:
                 <input type="text" name="username" onChange={this.handleChange} />
             </label>
-            
+
             <label>
             Password:
             <input type="text" name="password" onChange={this.handleChange} />
