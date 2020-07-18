@@ -15,7 +15,7 @@ handleChange = (event) => {
     this.setState({
         credentials: {
             ...this.state.credentials,
-            [e.target.name]: e.target.value
+            [event.target.name]: event.target.value
         }
     })
 }
@@ -27,6 +27,7 @@ handleLogin = (event) => {
     .post("/api/login", this.state.credentials)
     .then((response) => {
         localStorage.setItem("token", response.data.payload);
+        this.props.history.push("/protected");
     })
     .catch((error) => {
         this.setState({...this.state, isLoading: false});
@@ -39,7 +40,7 @@ render() {
     return (
         <div>
         <div className="login">
-            <form>
+            <form onSubmit={this.handleLogin}>
             <label>
                 Username:
                 <input type="text" name="username" onChange={this.handleChange} />
